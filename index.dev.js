@@ -63,7 +63,8 @@ export default (ctx, text, fontObject, _rectangle = {}, _options = {}) => {
             rectFillOnlyText: false,
             textPadding: 0,
             fillPadding: 0,
-            drawRect: false
+            drawRect: false,
+            rectColor: 'red'
         }, ..._options };
 
     if (typeof text != 'string') throw 'Missing string parameter';
@@ -88,6 +89,7 @@ export default (ctx, text, fontObject, _rectangle = {}, _options = {}) => {
         textHeight = textMetrics.height;
     }
 
+    console.log(textHeight);
     // Calculate text coordinates based on options
     let xPos = paddedRect.x;
     let yPos = options.fitMethod == 'box'
@@ -150,8 +152,10 @@ export default (ctx, text, fontObject, _rectangle = {}, _options = {}) => {
     if(options.drawRect) {
         // TODO: Figure out how to not stroke the text itself, just the rectangle
         ctx.save();
-        ctx.strokeStyle = 'red';
-        ctx.rect(paddedRect.x, paddedRect.y, paddedRect.width, paddedRect.height);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = options.rectColor;
+        ctx.rect(paddedRect.x - ctx.lineWidth, paddedRect.y - ctx.lineWidth,
+                paddedRect.width + ctx.lineWidth * 2, paddedRect.height + ctx.lineWidth * 2);
         ctx.stroke();
         ctx.strokeStyle = 'transparent';
         ctx.restore();

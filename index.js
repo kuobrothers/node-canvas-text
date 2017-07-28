@@ -4,12 +4,12 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var measureText = function measureText(text, font, fontSize) {
-    var method = arguments.length <= 3 || arguments[3] === undefined ? 'box' : arguments[3];
+    var method = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'box';
 
     var ascent = 0,
         descent = 0,
@@ -27,11 +27,9 @@ var measureText = function measureText(text, font, fontSize) {
             width += kerningValue * scale;
         }
 
-        var _glyph$getMetrics = glyph.getMetrics();
-
-        var yMin = _glyph$getMetrics.yMin;
-        var yMax = _glyph$getMetrics.yMax;
-
+        var _glyph$getMetrics = glyph.getMetrics(),
+            yMin = _glyph$getMetrics.yMin,
+            yMax = _glyph$getMetrics.yMax;
 
         ascent = Math.max(ascent, yMax);
         descent = Math.min(descent, yMin);
@@ -57,9 +55,9 @@ var padRectangle = function padRectangle(rectangle, padding) {
 };
 
 exports.default = function (ctx, text, fontObject) {
-    var _rectangle = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _rectangle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-    var _options = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+    var _options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
     var paddedRect = _extends({
         x: 0,
@@ -80,7 +78,8 @@ exports.default = function (ctx, text, fontObject) {
         rectFillOnlyText: false,
         textPadding: 0,
         fillPadding: 0,
-        drawRect: false
+        drawRect: false,
+        rectColor: 'red'
     }, _options);
 
     if (typeof text != 'string') throw 'Missing string parameter';
@@ -105,6 +104,7 @@ exports.default = function (ctx, text, fontObject) {
         textHeight = textMetrics.height;
     }
 
+    console.log(textHeight);
     // Calculate text coordinates based on options
     var xPos = paddedRect.x;
     var yPos = options.fitMethod == 'box' ? paddedRect.y + paddedRect.height - Math.abs(textMetrics.actualBoundingBoxDescent) : paddedRect.y + paddedRect.height;
@@ -165,8 +165,9 @@ exports.default = function (ctx, text, fontObject) {
     if (options.drawRect) {
         // TODO: Figure out how to not stroke the text itself, just the rectangle
         ctx.save();
-        ctx.strokeStyle = 'red';
-        ctx.rect(paddedRect.x, paddedRect.y, paddedRect.width, paddedRect.height);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = options.rectColor;
+        ctx.rect(paddedRect.x - ctx.lineWidth, paddedRect.y - ctx.lineWidth, paddedRect.width + ctx.lineWidth * 2, paddedRect.height + ctx.lineWidth * 2);
         ctx.stroke();
         ctx.strokeStyle = 'transparent';
         ctx.restore();
