@@ -79,7 +79,8 @@ exports.default = function (ctx, text, fontObject) {
         textPadding: 0,
         fillPadding: 0,
         drawRect: false,
-        rectColor: 'red'
+        rectColor: 'red',
+        rectWidth: 0
     }, _options);
 
     if (typeof text != 'string') throw 'Missing string parameter';
@@ -165,7 +166,7 @@ exports.default = function (ctx, text, fontObject) {
     if (options.drawRect) {
         // TODO: Figure out how to not stroke the text itself, just the rectangle
         ctx.save();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = options.rectWidth;
         ctx.strokeStyle = options.rectColor;
         ctx.rect(paddedRect.x - ctx.lineWidth, paddedRect.y - ctx.lineWidth, paddedRect.width + ctx.lineWidth * 2, paddedRect.height + ctx.lineWidth * 2);
         ctx.stroke();
